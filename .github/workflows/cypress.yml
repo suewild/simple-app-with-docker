@@ -1,0 +1,76 @@
+name: Cypress Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build and run Docker container
+        run: |
+          docker build -t simple-app .
+          docker run -d -p 3000:3000 --name test-container simple-app
+
+      - name: Wait for the app to be up and running
+        run: |
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+            echo "Waiting for the app to be up..."
+            sleep 2
+          done
+
+      - name: Run Cypress tests
+        run: npx cypress run --config baseUrl=http://localhost:3000
+
+      - name: Stop and remove the Docker container
+        run: docker stop test-container && docker rm test-container
+name: Cypress Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Run Cypress Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+
+      - name: Build and run Docker container
+        run: |
+          docker build -t simple-app .
+          docker run -d -p 3000:3000 --name test-container simple-app
+
+      - name: Wait for the app to be up and running
+        run: |
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000); do
+            echo "Waiting for the app to be up..."
+            sleep 2
+          done
+
+      - name: Run Cypress tests
+        run: npx cypress run --config baseUrl=http://localhost:3000
+
+      - name: Stop and remove the Docker container
+        run: docker stop test-container && docker rm test-container
