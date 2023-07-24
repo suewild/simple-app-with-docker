@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: 14
 
+      - name: Install Cypress
+        run: npx cypress install
+
       - name: Build and run Docker container
         run: |
           docker build -t simple-app .
